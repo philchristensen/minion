@@ -17,10 +17,10 @@ Service('postgresql',
 File('postgres-hba',
 	ensure		= present,
 	backup		= False,
-	path = "/etc/postgresql/9.1/main/pg_hba.conf",
-	content = template("fu-web/pg_hba.conf.production.erb"),
-	require = Package['postgresql91'],
-	notify = Service['postgresql'],
+	path		= "/etc/postgresql/9.1/main/pg_hba.conf",
+	content		= template("minion/pg_hba.conf.production.erb"),
+	require		= Package['postgresql91'],
+	notify		= Service['postgresql'],
 )
 
 Exec('postgresql-setup-user',
@@ -35,3 +35,14 @@ Exec('postgresql-setup-db',
 	require = [Exec['postgresql-setup-user']],
 )
 
+from minion.dependencies import init_graph
+
+g = init_graph()
+
+import gv
+from pygraph.readwrite.dot import write
+dot = write(gr)
+gvv = gv.readstring(dot)
+
+gv.layout(gvv,'dot')
+gv.render(gvv,'png','deps.png')

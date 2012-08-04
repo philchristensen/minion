@@ -3,6 +3,9 @@ declarations = dict()
 def template(path):
 	pass
 
+class ImproperlyConfigured(Exception):
+	pass
+
 class DeclarationBase(type):
 	def __getitem__(cls, declaration_id):
 		return DeclarationReference(cls, declaration_id)
@@ -11,33 +14,18 @@ class Declaration(object):
 	__metaclass__ = DeclarationBase
 	
 	def __init__(self, declaration_id, **kwargs):
-		pass
+		cls = self.__class__
+		if(declaration_id in declarations.setdefault(cls, {})):
+			raise ImproperlyConfigured("There's already a %r called %r" % (cls, declaration_id))
+		declarations[cls][declaration_id] = self
 
 class DeclarationReference(object):
 	def __init__(self, klass, declaration_id):
 		self.klass = klass
 		self.declaration_id = declaration_id
-
-class ConfigValue(object):
-	pass
-
-class apt(ConfigValue):
-	pass
-
-class macports(ConfigValue):
-	pass
-
-class pip(ConfigValue):
-	pass
-
-class present(ConfigValue):
-	pass
-
-class running(ConfigValue):
-	pass
-
-class keep(ConfigValue):
-	pass
+	
+	def resolve(self):
+		return declarations[self.klass][self.declaration_id]
 
 class Package(Declaration):
 	pass
