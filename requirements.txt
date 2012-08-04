@@ -1,0 +1,2 @@
+setuptools-git>=0.4.2
+fabric>=1.4.3
