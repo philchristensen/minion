@@ -1,16 +1,21 @@
 declarations = dict()
 
+def template(path):
+	pass
+
 class DeclarationBase(type):
 	def __getitem__(cls, declaration_id):
-		return DeclarationReference(declaration_id)
+		return DeclarationReference(cls, declaration_id)
 
 class Declaration(object):
 	__metaclass__ = DeclarationBase
+	
 	def __init__(self, declaration_id, **kwargs):
 		pass
 
 class DeclarationReference(object):
-	def __init__(self, declaration_id):
+	def __init__(self, klass, declaration_id):
+		self.klass = klass
 		self.declaration_id = declaration_id
 
 class ConfigValue(object):
