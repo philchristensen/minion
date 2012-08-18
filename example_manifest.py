@@ -38,11 +38,11 @@ Exec('postgresql-setup-db',
 from minion.dependencies import init_graph
 
 g = init_graph()
-
-import gv
-from pygraph.readwrite.dot import write
-dot = write(gr)
-gvv = gv.readstring(dot)
-
-gv.layout(gvv,'dot')
-gv.render(gvv,'png','deps.png')
+print g
+# import gv
+# from pygraph.readwrite.dot import write
+# dot = write(gr)
+# gvv = gv.readstring(dot)
+# 
+# gv.layout(gvv,'dot')
+# gv.render(gvv,'png','deps.png')

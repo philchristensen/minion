@@ -1,20 +1,36 @@
-from pygraph.classes.graph import graph
+import logging
+
+from pygraph.classes.digraph import digraph
 
 from minion import manifest
 
-deps = None
+logging.basicConfig(level=logging.DEBUG)
+
+log = logging.getLogger(__name__)
+g = None
 
 def init_graph():
-	global deps
-	if(deps):
-		return deps
-	deps = digraph()
+	global g
+	if(g):
+		return g
+	
+	g = digraph()
+	deps = []
 	for cls, lst in manifest.declarations.iteritems():
 		for declaration_id, dec in lst.iteritems():
-			deps.add_node(declaration_id, [('value', dec)])
+			log.debug('adding node %r' % declaration_id)
+			g.add_node(declaration_id)
 			reqs = getattr(dec, 'require', [])
 			if not(isinstance(reqs, (list, tuple))):
 				reqs = [reqs]
+			d = []
 			for req in reqs:
-				deps.add_edge([declaration_id, req.declaration_id])
-	return deps
+				d.append([req.declaration_id, declaration_id])
+			if(d):
+				deps.append(d)
+	
+	for dep in deps:
+		log.debug('adding edge %r' % dep)
+		g.add_edge(*dep)
+	
+	return g

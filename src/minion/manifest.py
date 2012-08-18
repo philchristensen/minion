@@ -13,11 +13,18 @@ class DeclarationBase(type):
 class Declaration(object):
 	__metaclass__ = DeclarationBase
 	
-	def __init__(self, declaration_id, **kwargs):
+	def __init__(self, id, **kwargs):
 		cls = self.__class__
-		if(declaration_id in declarations.setdefault(cls, {})):
+		if(id in declarations.setdefault(cls, {})):
 			raise ImproperlyConfigured("There's already a %r called %r" % (cls, declaration_id))
-		declarations[cls][declaration_id] = self
+		declarations[cls][id] = self
+		
+		self.id = id
+		for key, value in kwargs.iteritems():
+			setattr(self, key, value)
+	
+	def __repr__(self):
+		return '<%s:%r>' % (self.__class__.__name__, self.id)
 
 class DeclarationReference(object):
 	def __init__(self, klass, declaration_id):
